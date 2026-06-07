@@ -1,0 +1,16 @@
+po_number,vendor,approved_amount,date_issued
+PO-1001,Tata Consultancy Services Ltd,85000,2025-01-10
+PO-1002,Tata Consultancy Services Ltd,42000,2025-02-14
+PO-1003,Tata Consultancy Services Ltd,67500,2025-03-20
+PO-1004,Infosys Technologies Pvt Ltd,91000,2025-01-22
+PO-1005,Infosys Technologies Pvt Ltd,38500,2025-02-28
+PO-1006,Infosys Technologies Pvt Ltd,55000,2025-04-05
+PO-1007,Wipro Digital Solutions,72000,2025-01-15
+PO-1008,Wipro Digital Solutions,29500,2025-03-11
+PO-1009,Wipro Digital Solutions,48000,2025-04-18
+PO-1010,HCL Technologies Limited,63000,2025-02-07
+PO-1011,HCL Technologies Limited,99500,2025-03-25
+PO-1012,HCL Technologies Limited,17000,2025-05-02
+PO-1013,Mphasis Software Services,54000,2025-02-19
+PO-1014,Mphasis Software Services,78000,2025-04-10
+PO-1015,Mphasis Software Services,33000,2025-05-15
