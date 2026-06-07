@@ -56,7 +56,7 @@ def get_or_create_tracker(output_path):
             cell.alignment = Alignment(horizontal="center")
 
         # Set column widths
-        widths = [18, 18, 16, 30, 30, 14, 12, 16, 18, 12, 18, 50]
+        widths = [18, 18, 16, 30, 30, 14, 12, 16, 18, 12, 18, 70]
         for col_num, width in enumerate(widths, start=1):
             ws.column_dimensions[
                 openpyxl.utils.get_column_letter(col_num)
