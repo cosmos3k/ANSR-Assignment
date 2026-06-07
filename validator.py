@@ -38,7 +38,7 @@ def load_po_master(po_file_path):
     return po_data
 
 
-def validate_invoice(extracted, po_data):
+def validate_invoice(extracted, po_data, tolerance=0.01):
     """
     Compares extracted invoice fields against PO master.
 
@@ -78,8 +78,9 @@ def validate_invoice(extracted, po_data):
     # tolerance=0.01 means amounts within 1% of each other are accepted.
     if invoice_amount is not None:
         difference = abs(invoice_amount - po_amount)
+        allowed_diff = po_amount * tolerance
 
-        if difference == 0:
+        if difference <= allowed_diff:
             status = "MATCH"
             note   = "Invoice matches PO record."
         else:
@@ -92,7 +93,7 @@ def validate_invoice(extracted, po_data):
         note   = "Could not extract amount from invoice."
 
     return {
-        **extracted, 
+        **extracted,
         "po_vendor":        po_vendor,
         "po_amount":        po_amount,
         "status":           status,
