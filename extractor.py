@@ -34,17 +34,15 @@ def read_pdf(filepath):
 
 def read_docx(filepath):
     """Extract all text from a DOCX file.
-    Reads both paragraphs AND table cells — because
-    many invoice templates store data inside tables.
+    Reads both paragraphs AND table cells.
     """
     text = ""
     doc = Document(filepath)
 
-    # Read regular paragraphs
     for paragraph in doc.paragraphs:
         text += paragraph.text + "\n"
 
-    # Read table cells — this is the critical addition
+    # Also read table cells — many invoice templates use tables
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -115,7 +113,11 @@ Extract these fields:
 - invoice_number: the invoice or document reference number
 - date: the invoice date in YYYY-MM-DD format
 - po_number: the Purchase Order number (starts with PO-)
-- amount: the total amount as a number only (no currency symbols, no commas)
+- amount: the BASE amount BEFORE tax or GST.
+  Look for labels like: Taxable Value, Subtotal, Base Amount,
+  Net Amount, Amount Before Tax.
+  Do NOT use the GST-inclusive grand total.
+  Only use the grand total if absolutely no pre-tax amount exists.
 
 If a field cannot be found, use null.
 

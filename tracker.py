@@ -52,7 +52,7 @@ def get_or_create_tracker(output_path):
         for col_num, header in enumerate(HEADERS, start=1):
             cell = ws.cell(row=1, column=col_num, value=header)
             cell.font      = Font(bold=True, color="FFFFFF")
-            #cell.fill      = PatternFill("solid", fgColor="2F5496")
+            cell.fill      = PatternFill("solid", fgColor="2F5496")
             cell.alignment = Alignment(horizontal="center")
 
         # Set column widths
