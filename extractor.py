@@ -33,11 +33,25 @@ def read_pdf(filepath):
 
 
 def read_docx(filepath):
-    """Extract all text from a DOCX file."""
+    """Extract all text from a DOCX file.
+    Reads both paragraphs AND table cells — because
+    many invoice templates store data inside tables.
+    """
     text = ""
-    doc = Document(filepath)         # open the Word document
-    for paragraph in doc.paragraphs: # loop through every paragraph
+    doc = Document(filepath)
+
+    # Read regular paragraphs
+    for paragraph in doc.paragraphs:
         text += paragraph.text + "\n"
+
+    # Read table cells — this is the critical addition
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                if cell.text.strip():
+                    text += cell.text.strip() + "  "
+            text += "\n"
+
     return text
 
 

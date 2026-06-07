@@ -1,7 +1,17 @@
+# main.py
+# Entry point for the invoice automation system.
+# Processes all invoices in invoices/input/ and
+# updates the Excel tracker in invoices/output/
+
 from groq import Groq
 from dotenv import load_dotenv
 import os
+from utils     import get_all_invoices
+from extractor import extract_invoice
+from validator import load_po_master, validate_invoice
+from tracker   import get_or_create_tracker, append_result, save_tracker
 
+'''
 load_dotenv()
 client = Groq(api_key=os.getenv('GROQ_API_KEY'))
 response = client.chat.completions.create(
@@ -9,3 +19,91 @@ response = client.chat.completions.create(
     messages=[{'role': 'user', 'content': 'Say exactly: API key works'}]
 )
 print(response.choices[0].message.content)
+'''
+
+# ── Configuration ──
+INPUT_FOLDER  = "invoices/input"
+OUTPUT_FOLDER = "invoices/output"
+TRACKER_FILE  = os.path.join(OUTPUT_FOLDER, "tracker.xlsx")
+PO_MASTER     = "data/po_master.csv"
+
+
+def main():
+    print("=" * 60)
+    print("   INVOICE AUTOMATION SYSTEM")
+    print("=" * 60)
+
+    # Step 1: Load PO master file
+    print("\n[1/4] Loading PO master file...")
+    po_data = load_po_master(PO_MASTER)
+    print(f"      Loaded {len(po_data)} PO records.")
+
+    # Step 2: Scan input folder for invoice files
+    print("\n[2/4] Scanning invoice folder...")
+    invoice_files = get_all_invoices(INPUT_FOLDER)
+    print(f"      Found {len(invoice_files)} invoice files.")
+
+    if not invoice_files:
+        print("      No invoices to process. Exiting.")
+        return
+
+    # Step 3: Prepare Excel tracker
+    print("\n[3/4] Preparing Excel tracker...")
+    wb, ws = get_or_create_tracker(TRACKER_FILE)
+
+    # Step 4: Process each invoice
+    print("\n[4/4] Processing invoices...\n")
+
+    results = {
+        "MATCH":           [],
+        "AMOUNT_MISMATCH": [],
+        "PO_NOT_FOUND":    [],
+        "AMOUNT_MISSING":  [],
+        "OTHER":           []
+    }
+
+    for i, filepath in enumerate(invoice_files, start=1):
+        filename = os.path.basename(filepath)
+        print(f"  [{i}/{len(invoice_files)}] {filename}")
+
+        try:
+            # Extract fields from invoice
+            extracted = extract_invoice(filepath)
+
+            # Validate against PO master
+            result = validate_invoice(extracted, po_data)
+
+            # Append to Excel tracker
+            append_result(ws, result)
+
+            # Track result for summary
+            status = result.get("status", "OTHER")
+            if status in results:
+                results[status].append(filename)
+            else:
+                results["OTHER"].append(filename)
+
+            print(f"      Status: {result['status']}")
+            print(f"      Note  : {result['discrepancy_note']}\n")
+
+        except Exception as e:
+            print(f"      ERROR processing {filename}: {e}\n")
+
+    # Save the tracker
+    save_tracker(wb, TRACKER_FILE)
+
+    # Print final summary
+    print("=" * 60)
+    print("   PROCESSING COMPLETE — SUMMARY")
+    print("=" * 60)
+    print(f"  Total invoices processed : {len(invoice_files)}")
+    print(f"  ✅ Matched               : {len(results['MATCH'])}")
+    print(f"  ⚠️  Amount mismatches     : {len(results['AMOUNT_MISMATCH'])}")
+    print(f"  ❌ PO not found          : {len(results['PO_NOT_FOUND'])}")
+    print(f"  ❓ Other issues          : {len(results['AMOUNT_MISSING']) + len(results['OTHER'])}")
+    print(f"\n  Tracker saved to: {TRACKER_FILE}")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
