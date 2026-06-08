@@ -184,7 +184,10 @@ def main():
             # Write alert file for discrepancies
             status = result.get("status", "OTHER")
             if status in ["AMOUNT_MISMATCH", "PO_NOT_FOUND"]:
-                write_alert_file(result)
+                alert_path = write_alert_file(result)
+                result["alert_triggered"] = "Yes ✓" if alert_path else "Failed"
+            else:
+                result["alert_triggered"] = "—"
 
             print(f"      Status: {result['status']}")
             print(f"      Note  : {result['discrepancy_note']}\n")
