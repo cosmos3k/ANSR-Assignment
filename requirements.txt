@@ -37,9 +37,10 @@ google-api-core==2.31.0
 google-api-python-client==2.197.0
 google-auth==2.53.0
 google-auth-httplib2==0.4.0
-google-generativeai==0.8.6
+google-genai==2.8.0
 googleapis-common-protos==1.75.0
 greenlet==3.5.1
+groq==1.4.0
 grpcio==1.81.0
 grpcio-status==1.71.2
 h11==0.16.0
@@ -52,6 +53,7 @@ httpx-sse==0.4.3
 huggingface_hub==1.18.0
 humanfriendly==10.0
 idna==3.18
+imap-tools==1.13.0
 importlib_resources==7.1.0
 ipykernel @ file:///Users/runner/miniforge3/conda-bld/bld/rattler-build_ipykernel_1770566135/work
 ipython @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_ipython_1780654403/work

@@ -21,7 +21,9 @@ HEADERS = [
     "PO Approved Amount",
     "Difference",
     "Status",
-    "Discrepancy Note"
+    "Discrepancy Note",
+    "Sender Email",
+    "Alert Email Sent" 
 ]
 
 # Status colors
@@ -56,7 +58,7 @@ def get_or_create_tracker(output_path):
             cell.alignment = Alignment(horizontal="center")
 
         # Set column widths
-        widths = [18, 18, 16, 30, 30, 14, 12, 16, 18, 12, 18, 70]
+        widths = [18, 18, 16, 30, 30, 14, 12, 16, 18, 12, 18, 70, 28, 16]
         for col_num, width in enumerate(widths, start=1):
             ws.column_dimensions[
                 openpyxl.utils.get_column_letter(col_num)
@@ -86,7 +88,9 @@ def append_result(ws, result):
         po_amount if po_amount else "N/A",
         difference if difference is not None else "N/A",
         result.get("status"),
-        result.get("discrepancy_note")
+        result.get("discrepancy_note"),
+        result.get("sender_email", "N/A"),
+        result.get("alert_sent", "No") 
     ]
 
     ws.append(row_data)
